@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taxi Fare Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            color: #333;
+            font-size: 2.5rem; /* Increased header size */
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: #555;
+            font-size: 1.1rem; /* Slightly increased for balance */
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 1.75rem;
+        }
+
+        p {
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #28a745;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #218838;
+        }
+
+        #result {
+            margin-top: 1.5rem;
+            font-weight: bold;
+            font-size: 1.25rem;
+            color: #333;
+        }
+
+        .note {
+            font-size: 0.9rem;
+            color: #777;
+            margin-top: 1.5rem;
+        }
+
+        footer {
+            margin-top: 2rem;
+            text-align: center;
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: #28a745;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 2rem; /* Adjusted for smaller screens */
+            }
+
+            header p {
+                font-size: 1rem; /* Adjusted for smaller screens */
+            }
+
+            .container {
+                padding: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            p {
+                font-size: 0.9rem;
+            }
+
+            input[type="number"], button {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Taxi Fare Predictor</h1>
+        <p>
+            Estimate your taxi fare quickly and easily! Just enter the distance of your trip, and we'll provide 
+            an estimated fare based on standard rates. Perfect for planning your travel budget.
+        </p>
+    </header>
+
+    <div class="container">
+        <h2>Calculate Your Fare</h2>
+        <p>
+            Enter the distance of your trip in kilometers (km) below. Our system will calculate the estimated fare 
+            based on a standard rate per kilometer.
+        </p>
+        <input type="number" id="distance" placeholder="Enter Distance (km)" min="1" step="0.1">
+        <button onclick="predictFare()">Predict Fare</button>
+        <div id="result"></div>
+        <p class="note">
+            Note: This is an estimated fare and may vary based on traffic, time of day, and other factors.
+        </p>
+    </div>
+
+    <script>
+        function predictFare() {
+            let distance = document.getElementById("distance").value;
+            if (distance) {
+                fetch("/predict", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ distance: parseFloat(distance) })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("result").innerHTML = "Estimated Fare: ₹" + data.fare.toFixed(2);
+                })
+                .catch(error => console.error("Error:", error));
+            } else {
+                document.getElementById("result").innerHTML = "Please enter a valid distance.";
+            }
+        }
+    </script>
+
+</body>
+</html>
